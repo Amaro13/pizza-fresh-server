@@ -1,0 +1,27 @@
+// Installing the NestJS
+npm i -g @nestjs/cli
+
+// Starting a new project
+nest new (nestjs-intr) -> name of the project
+
+// Use of the usual npm run, in the package.json you can see the start options, while working use nest start:dev to watch for changes in files
+
+//in the controller you controll the routes access just insert in the @controller or @get
+
+//in the service you provide the data or functions into the project
+
+// first thing to do is create the .editorconfig  and fill it like so:
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true // optional because frankly this one can get on your nerves while coding since it inserts the final newline everytime you stop using the keyboard and sometimes you don't need to.
+
+// change the listen port in the main to another besides 3000 so it doesn't start a conflict with other ports since most use 3000 already
