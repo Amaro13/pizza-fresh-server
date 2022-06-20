@@ -31,3 +31,7 @@ insert_final_newline = true // optional because frankly this one can get on your
 // first thing to create is the back end data, start by creating the folder and the file in the src folder (in this case is the table)
 
 // Pay very close attention to this table, and how it's created, notice the usability, the ease and the direction in witch the data flows, much better than before, use it read the coments and understand all of it, in doubt ask your brother or freaking google, for fucks sake study more, sacrifice a saturday more often you lazy bum.
+
+// after the creation of the module, controller and service for the table, create another folder inside called dto(Data Transfer Object) witch is a simple object used to transfer data from one place into another
+
+// Now it's time to create a folder inside the src called entities, an entity is a representation of a conjunction of informations about a determined concept of the system. All entities have atributes, witch are the informations that reference the entity.
