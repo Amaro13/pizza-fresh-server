@@ -30,4 +30,4 @@ insert_final_newline = true // optional because frankly this one can get on your
 
 // first thing to create is the back end data, start by creating the folder and the file in the src folder (in this case is the table)
 
-// Pay very close attention to this table, and how it's created, notice the usability the easy and the direction in wich the data flows, much better than before, use it read the coments and understand.
+// Pay very close attention to this table, and how it's created, notice the usability, the ease and the direction in witch the data flows, much better than before, use it read the coments and understand all of it, in doubt ask your brother or freaking google, for fucks sake study more, sacrifice a saturday more often you lazy bum.
