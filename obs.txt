@@ -35,3 +35,9 @@ insert_final_newline = true // optional because frankly this one can get on your
 // after the creation of the module, controller and service for the table, create another folder inside called dto(Data Transfer Object) witch is a simple object used to transfer data from one place into another
 
 // Now it's time to create a folder inside the src called entities, an entity is a representation of a conjunction of informations about a determined concept of the system. All entities have atributes, witch are the informations that reference the entity.
+
+// Now install the validator and transformer with npm i class-validator class-transformer. With them installed you can now validate data that will be passed through the databank. Change the main and dt as required for it
+
+// Now install the swagger with: npm i @nestjs/swagger swagger-ui-express
+
+// Set the swagger properly in the main, app  controller, table controller and in the dto. Observe that the swagger can now be checked in the localhost while the back is running.
