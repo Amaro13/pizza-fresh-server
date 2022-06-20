@@ -25,3 +25,9 @@ trim_trailing_whitespace = true
 insert_final_newline = true // optional because frankly this one can get on your nerves while coding since it inserts the final newline everytime you stop using the keyboard and sometimes you don't need to.
 
 // change the listen port in the main to another besides 3000 so it doesn't start a conflict with other ports since most use 3000 already
+
+// when changing a function from a module, change using F2, using it this way changes it's name from all modules so there is no conflict.
+
+// first thing to create is the back end data, start by creating the folder and the file in the src folder (in this case is the table)
+
+// Pay very close attention to this table, and how it's created, notice the usability the easy and the direction in wich the data flows, much better than before, use it read the coments and understand.
