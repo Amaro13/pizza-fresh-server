@@ -1,0 +1,213 @@
+// Declaring Variables
+var nome: string;
+let sobrenome: string;
+const idade: number;
+
+type Id = number | string | undefined;
+
+function logDetails(id: Id, item: string) {
+	console.log(`O produto ${id} é um ${item}.`);
+}
+
+logDetails(123, "notebook");
+logDetails("123", "notebook");
+
+type AccountInfo = {
+	id: number;
+	name: string;
+	email?: string;
+};
+// using the "?" makes the variable not mandatory
+
+const account: AccountInfo = {
+	id = 1,
+	name = "Paulo Salvatore",
+};
+
+const account: AccountInfo = {
+	id = 1,
+	name = "Thiago",
+	email = "Thiago@email.com",
+};
+
+type Platform = "Windows" | "Linux" | "Mac Os";
+
+function renderPlatform(platform: Platform) {
+	return platform;
+}
+
+const account: AccountInfo = {
+	id = 1,
+	name = "Paulo Salvatore",
+};
+
+type CharacterInfo = {
+	nickname: string;
+	level: number;
+};
+
+type PlayerInfo = AccountInfo & CharacterInfo;
+
+const player: PlayerInfo = {
+	id = 123,
+	name = "Thiago",
+	nickname = "thi.code",
+	level = 100,
+};
+
+
+
+// Functions
+// never
+// "this must never happen!"
+function error(): never {
+	throw new Error("error");
+}
+
+// void (vazio)
+// "This will never return"
+function logger(): void {
+	console.log("blue");
+}
+
+
+//Interfaces
+interface Game {
+	id?: string | number;
+	title: string;
+	readonly genre: string;
+	platform: string[];
+}
+
+const tlou: Game = {
+	id: 123,
+	title: "The Last Of Us",
+	genre: "Action",
+	platform: ["PS3", "PS4"],
+};
+
+tlou.genre = "FPS"; //error
+
+
+// Type Alias vs Interface
+
+Type Alias:
+type Game = {
+	title: string;
+};
+
+type DLC = {
+	extra: string;
+};
+
+type GameCollection = Game & DLC;
+
+class CreateGame implements GameCollection {}
+
+type getSimilars = (title: string) => void;
+
+type Id = string | number;
+
+type Tuple = [number, number];
+
+// accepts the value declaration only if they are the exact same pre-determined quantity.
+
+const firstTuple: Tuple = [1, 2]; // pass
+const secondTuple: Tuple = [1, 2, 3]; // error
+
+there is an error if both are declared with the same name
+type Blue = {
+	a: string;
+};
+type Blue = {
+	b: string;
+};
+
+Interface:
+interface Game = {
+    title: string;
+}
+
+interface DLC = {
+    extra: string;
+}
+
+interface GameCollection extends Game, DLC{}
+
+class CreateGame implements GameCollection {}
+
+interface getSimilars {
+	(title: string): void;
+}
+
+interface Id extends number {}//error
+interface Id extends Number // ok
+
+interface Tuple {
+	0: number;
+	1: number;
+}
+
+// accepts the value declaration as long as they are the exact same or more than the pre-determined quantity.
+
+const tuple: Tuple = [1, 2, 3]; // pass
+
+if both are declare with the same name, they are united.
+interface Blue {
+    a: string;
+}
+interface Blue {
+    b: string;
+}
+// resultado:
+
+const blue: Blue = {
+    a: "Blue",
+    b: "EdTech",
+}
+
+
+
+//Decorators
+To activate them
+tsc --target ES5 --experimentalDecorators
+
+Go to tsconfig.json and:
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"experimentalDecorators": true
+	}
+}
+
+decorators are functions that when called before the classes, they are executed as the object is getting constructed.(@Log)
+function Log(constructor: any) {
+	console.log('Class constructed.');
+}
+
+@Log
+class Blue {}
+
+const blue = new Blue(); // Class constructed.
+
+function Log(prefix: string) {
+  return (constructor: any) => {
+    console.log(prefix);
+  }
+}
+
+@Log('Hello')
+class Blue {}
+
+const blue = new Blue();
+
+function SetApiVersion(constructor: any) {
+  return class extends constructor {
+    version = '0.0.1';
+  }
+}
+
+@SetApiVersion
+class Programa {}
+
+console.log(new Programa()); // Programa { version: '0.0.1'}

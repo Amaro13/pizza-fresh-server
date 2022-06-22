@@ -1,3 +1,21 @@
+Basic tips for typescript
+
+npm init -y
+npm i -D typescript
+npx tsc --init
+//The one below creates the index.js as written on the ts
+npx tsc
+//Insert in package.json
+"start": "node dist/index.js",
+    "build": "npx tsc",
+    "build-and-run": "npm run build && npm start"
+
+the last one bulilds and runs the index.js
+
+// Create the dist folder and update the tsconfig.json. Don't forget to make it not a coment genius.
+"outDir": "./dist"
+
+
 // Installing the NestJS
 npm i -g @nestjs/cli
 
