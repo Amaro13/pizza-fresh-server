@@ -1,0 +1,225 @@
+// NestJS
+
+It's a framework with a base in Angular
+
+Module
+The module is the starting point of the nest and the one that concentrates all the application paths;
+The App Module will reference all other modules along with their controllers and services;
+The module has an architecture that generates a self-sufficient ecosystem around an entity.
+controller
+The controller is the module's entry point;
+The controller receives the request, validates the data, receives the service logic and returns the responses;
+service
+The service is responsible for making the connection with the database, taking and bringing the information to it;
+The service delivers this data to the controller.
+
+// Starting the project
+
+In the main.ts (first executed file)
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+}
+
+bootstrap();
+
+In the app.module.ts
+//Define the controllers and the providers where the services are.
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+In the app.controller.ts
+It is the entry point and for it to exist we need to insert the @Controller decorator;
+The most important within it are the methods and these methods must contain the decorator with the specific verb;
+We have the constructor and within Nest they will bring necessary dependencies for the controller to work. For example, services;
+And through the service, he will have the information.
+
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+
+In the app.service.ts
+The service information is simply a method that returns a message;
+It needs to contain the @Injectable decorator.
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AppService {
+  getHello(): string {
+    return 'Hello World!';
+  }
+}
+
+
+What was done in the pizza fresh project:
+
+main.ts
+We put the validation mechanism: ValidationPipe. And we installed two libraries for that: class-transformer and class-validator;
+We configure Swagger and emphasize the importance of implementing it during development;
+And we set port 3001 to run our application.
+
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Validation
+  app.useGlobalPipes(new ValidationPipe());
+
+  // Swagger
+  const config = new DocumentBuilder()
+    .setTitle('PizzaFresh')
+    .setDescription('Aplicação para gestão das mesas de uma pizzaria')
+    .setVersion('1.0.0')
+    .addTag('status')
+    .addTag('table')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  await app.listen(3333);
+}
+
+bootstrap();
+
+
+app.module.ts
+
+Import the TableModule and all other modules that we are going to use in our application.
+
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TableModule } from './table/table.module';
+
+@Module({
+  imports: [TableModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+
+table.module.ts
+
+We have the entire ecosystem reserved just for working with tables.
+
+import { Module } from '@nestjs/common';
+import { TableController } from './table.controller';
+import { TableService } from './table.service';
+
+@Module({
+  controllers: [TableController],
+  providers: [TableService],
+})
+export class TableModule {}
+
+
+create-table.dto.ts
+
+Here we have the table creation structure with the proper validations and with the swagger implemented.
+
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsPositive } from 'class-validator';
+
+export class CreateTableDto {
+  @IsNumber()
+  @IsPositive()
+  @ApiProperty({
+    description: 'O número da mesa',
+    example: 1,
+  })
+  number: number;
+}
+
+
+table.entity.ts
+
+It's the main structure of the entity
+
+export class Table {
+  id: string;
+  number: number;
+}
+
+
+table.controller.ts
+
+It is the gateway after the module. For now we only have two endpoints;
+We put ApiTags to document the routes responsible for the tables;
+We insert the service through the constructor.
+
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateTableDto } from './dto/create-table.dto';
+import { TableService } from './table.service';
+
+@ApiTags('table')
+@Controller('table')
+export class TableController {
+  constructor(private tableService: TableService) {}
+
+  @Get()
+  findAll() {
+    return this.tableService.findAll();
+  }
+
+  @Post()
+  create(@Body() createTableDto: CreateTableDto) {
+    return this.tableService.create(createTableDto);
+  }
+}
+
+
+table.service.ts
+
+We create a list of tables;
+The findAll method returns everything;
+The create method creates a new table.
+
+import { Injectable } from '@nestjs/common';
+import { CreateTableDto } from './dto/create-table.dto';
+import { Table } from './entities/table.entity';
+
+@Injectable()
+export class TableService {
+  tables: Table[] = [];
+
+  findAll() {
+    return this.tables;
+  }
+
+  create(createTableDto: CreateTableDto) {
+    const table: Table = { id: 'random_id', ...createTableDto };
+
+    this.tables.push(table);
+
+    return table;
+  }
+}
