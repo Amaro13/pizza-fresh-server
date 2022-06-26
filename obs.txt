@@ -10,7 +10,7 @@ npx tsc
     "build": "npx tsc",
     "build-and-run": "npm run build && npm start"
 
-the last one bulilds and runs the index.js
+the last one builds and runs the index.js
 
 // Create the dist folder and update the tsconfig.json. Don't forget to make it not a coment genius.
 "outDir": "./dist"
