@@ -131,3 +131,11 @@ export class PrismaModule {}
 // in the table.module, add the imports:[PrismaModule]
 
 // in the table.service, add the constructor(private readonly prisma: PrismaService) {} right after the opening of the class, now update the this reference in the service
+
+// use the prisma methods to do a findAll with the prisma method of many and a create with the prisma method of create.
+
+// remember to turn the service and controller methods into promises, given that now that they connect to exterior data they are all promises. To infer the promise you can write it manually or just select the method and press Ctrl + . it will show the options, infer to the entity.
+
+// Add now the findID in service and use it to create the findById in the controller. The @Param(imported from common) must be included to define the id as parameter of search.
+
+// using the api operation from swagger is optional but good practice to describe what the method is trying to do, put them on each of the actions.
