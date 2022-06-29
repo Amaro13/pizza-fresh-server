@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTableDto } from './dto/create-table.dto';
 import { Table } from './entities/table.entity';
 
 @Injectable()
 export class TableService {
-  tables: Table[] = []; // this is creating the item tables in this class with the data pulled from the table.entity
+  constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.tables; //return the item tables created in the first line of this class
+    return this.prisma.table.findMany(); //return all the items in the prisma.table
   }
 
-  create(createTableDto: CreateTableDto) {
-    const table: Table = { id: 'random_id', ...createTableDto }; //this creates an item called table that has an id and all the info from the createTableDto using the spread(...) operator
+  create(dto: CreateTableDto) {
+    const data: Table = { ...dto }; //this creates an item called table that has an id(as optional in the entity) and all the info from the createTableDto using the spread(...) operator. If you name the receiving as data, you can just use the data in the create method, since the key and value is of the same name
 
-    this.tables.push(table); //this inserts the item table into the tables
-
-    return table; // this returns the item table
+    return this.prisma.table.create({ data }); // this returns the new data table(since it has the name data you can just write data instead of data:data) to the prisma table with the id getting created automatically with the ORM.
   }
 }

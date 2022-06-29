@@ -126,3 +126,8 @@ import { PrismaService } from './prisma.service';
   exports: [PrismaService],
 })
 export class PrismaModule {}
+
+
+// in the table.module, add the imports:[PrismaModule]
+
+// in the table.service, add the constructor(private readonly prisma: PrismaService) {} right after the opening of the class, now update the this reference in the service

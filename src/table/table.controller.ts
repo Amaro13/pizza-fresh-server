@@ -15,8 +15,8 @@ export class TableController {
   }
 
   @Post() //using the @post to insert a new table
-  create(@Body() createTableDto: CreateTableDto) {
+  create(@Body() dto: CreateTableDto) {
     // with this @body it now is getting the info from createTableDto and inserting into the @body
-    return this.tableService.create(createTableDto);
+    return this.tableService.create(dto);
   }
 }
