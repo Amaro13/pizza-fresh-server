@@ -59,3 +59,38 @@ insert_final_newline = true // optional because frankly this one can get on your
 // Now install the swagger with: npm i @nestjs/swagger swagger-ui-express
 
 // Set the swagger properly in the main, app  controller, table controller and in the dto. Observe that the swagger can now be checked in the localhost while the back is running.
+
+// install postgres and beekeeper, they are the databank storage programs that will be used in this project, when you install the postgres you will have to create the username and password, inform them in beekeeper and connect
+
+// An ORM maps between an Object Model and a Relational Database. An ODM maps between an Object Model and a Document Database.
+// ODM on the other hand is an Object Document Mapper, which maps objects with a Document Database like MongoDB.
+//The main difference is that ORM is for MySQL databases, while ODM does the mapping for document representation of data. Best way to remember what ORM does would be to think of it as an excel spread sheet, with rows and columns. When using this set up, you want to be sure you have a great plan on how you want to tackle the current application, it does not allow as many modifications like ODM does. With ODM we can add new fields and properties easily but with ORM when adding a new field you need to keep in mind that nothing stays empty so it needs a value to be as default unless you want to go into each and modify.
+
+// Prisma is an ORM just like Sequelize and Mongoose, wich is used to facilitator of comunication with a database in SQL.
+
+// Now install prisma using npm i -D prisma
+
+// Now give the prisma an init using npx prisma init and add the .env to the .gitignore file
+
+// in the schema.prisma you can change the provider depending on what database program you are using: postgres, mongoose, mongoDB, sequelize, etc. In this case we are using the postgres.
+
+// Change the .env to fit the username, password and database you created in postgres. : DATABASE_URL="postgresql://username:password@localhost:5432/database"
+
+// Create the DB model in the schema.prisma, Example:
+model Table{
+  id String @id @default(uuid()) // this is creating a column called id that accepts only strings and its a primary column that by default only accepts uniqueid.
+
+  number Int @unique // this is creating a column called number that accepts integer values and it's only unique values
+
+  createdAt DateTime @default(now()) // this is creating a column called createdAt that receives the date and by default receives the date now. Meaning the moment that it was created.
+
+  updatedAt DateTime @updatedAt // this is creating a column called updatedAt that receives the date from @updatedAt
+}
+
+// now run npx prisma db push to create the db schema in the database, this creates a new database or substitutes existing one, if you wish to just alter or add new thins use the migrate function
+
+// after the database is created, run the npx prisma studio to check the client with the database and you can manually update, create and delete data. You can preferably use the beekeeper for this since the prisma studio is more limited(can't run queries), but usually for manual runs and checkings the studio should suffice.
+
+// it's a good ideia now to divide three terminals, one for use in single actions, one for nest to run the start dev and one to run the prisma studio.
+
+// in the terminal run npx prisma generate
