@@ -139,3 +139,15 @@ export class PrismaModule {}
 // Add now the findID in service and use it to create the findById in the controller. The @Param(imported from common) must be included to define the id as parameter of search.
 
 // using the api operation from swagger is optional but good practice to describe what the method is trying to do, put them on each of the actions.
+
+// create the update dto for the user
+
+// install the mapped-types with the npm i @nestjs/mapped-types, it serves to update partially a value with the update dto, while using it, all variables used in the classes are optional.
+
+// creating another method for a function or object that exists in another file, it can be done selecting the method and using (Ctrl + .)
+
+// now is the time where in the service you will start using the this.prisma.dto.* method, remember if you are in doubt of what the method does or require, us the (ctrl + click) to discover follow it until you fin de dtoargs.
+
+// since you are working with probable variables you must let the variables be optional, so use the Partial<> to turn every variable within into optional values.
+
+// Don't forget, when using @Param don't use the : here you are using the variable itself in a method, when you use the : it's for routes as in get, post, delete, update, patch, etc.

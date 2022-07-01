@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common'; // this is importing the methods used to render the data
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common'; // this is importing the methods used to render the data
 import { TableService } from './table.service'; // this is importing the functions from table.service as methods
 import { CreateTableDto } from './dto/create-table.dto'; // this is importing the functions from create-table.dto as methods
 import { ApiOperation, ApiTags } from '@nestjs/swagger'; // this is importing from the swagger for apiTags (must install with npm first)
 import { Table } from './entities/table.entity';
+import { UpdateTableDto } from './dto/update-table.dto';
 
 @ApiTags('table') // links the controller to the all the APITAGs (get, post, delete, etc)
 @Controller('table') //using the table here you are setting the table as the prefix for this controller
@@ -22,7 +23,8 @@ export class TableController {
   @ApiOperation({
     summary: 'Show a table',
   })
-  findOne(@Param('id') id: string): Promise<Table> { // the @Param must be included to define the id as parameter of search.
+  findOne(@Param('id') id: string): Promise<Table> {
+    // the @Param must be included to define the id as parameter of search. Don't forget when using param no :.
     return this.tableService.findOne(id);
   }
 
@@ -33,5 +35,14 @@ export class TableController {
   create(@Body() dto: CreateTableDto): Promise<Table> {
     // with this @body it now is getting the info from createTableDto and inserting into the @body
     return this.tableService.create(dto);
+  }
+
+  @Patch(':id') //the patch is used when you want to update partially or fully the values of an object while the post updates it fully
+  @ApiOperation({
+    summary: 'Updates a table by id',
+  })
+  update(@Param('id') id: string, @Body() dto: UpdateTableDto): Promise<Table> {
+    // requires the id ad receives it as string, pulls the value in the body and receives the UpdateTableDto as object
+    return this.tableService.update(id, dto);
   }
 }

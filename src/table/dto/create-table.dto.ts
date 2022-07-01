@@ -6,7 +6,7 @@ export class CreateTableDto {
   @IsPositive() //this rule from the validator makes it only possible to accept a positive
   @ApiProperty({
     //this informs that this data is an Api property and adding the item it adds the property with the item as an example
-    description: 'O número da mesa',
+    description: 'The table number',
     example: 1,
   })
   number: number;
