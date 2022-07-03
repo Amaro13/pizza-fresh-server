@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common'; // this is importing the methods used to render the data
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common'; // this is importing the methods used to render the data
 import { TableService } from './table.service'; // this is importing the functions from table.service as methods
 import { CreateTableDto } from './dto/create-table.dto'; // this is importing the functions from create-table.dto as methods
 import { ApiOperation, ApiTags } from '@nestjs/swagger'; // this is importing from the swagger for apiTags (must install with npm first)
@@ -42,7 +52,17 @@ export class TableController {
     summary: 'Updates a table by id',
   })
   update(@Param('id') id: string, @Body() dto: UpdateTableDto): Promise<Table> {
-    // requires the id ad receives it as string, pulls the value in the body and receives the UpdateTableDto as object
+    // requires the id and receives it as string, pulls the value in the body and receives the UpdateTableDto as object
     return this.tableService.update(id, dto);
+  }
+
+  @Delete(':id') // is used to delete the item witch contains the id
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Deletes the table by id',
+  })
+  delete(@Param('id') id: string) {
+    // requires the id as Param and receives the id as string, with the delete it finds the item with this id and deletes it
+    this.tableService.delete(id);
   }
 }
