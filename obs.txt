@@ -77,17 +77,54 @@ insert_final_newline = true // optional because frankly this one can get on your
 // Change the .env to fit the username, password and database you created in postgres. : DATABASE_URL="postgresql://username:password@localhost:5432/database"
 
 // Create the DB model in the schema.prisma, Example:
-model Table{
-  id String @id @default(uuid()) // this is creating a column called id that accepts only strings and its a primary column that by default only accepts uniqueid.
-
-  number Int @unique // this is creating a column called number that accepts integer values and it's only unique values
-
-  createdAt DateTime @default(now()) // this is creating a column called createdAt that receives the date and by default receives the date now. Meaning the moment that it was created.
-
-  updatedAt DateTime @updatedAt // this is creating a column called updatedAt that receives the date from @updatedAt
+generator client { //is created automatically
+  provider = "prisma-client-js"
 }
 
-// Now run npx prisma db push to create the db schema in the database, this creates a new database or substitutes existing one, if you wish to just alter or add new thins use the migrate function
+datasource db { // change the provider depending on what you are using, the example uses the postgresql
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Table{ // creates the table Table in the db
+  id String @id @default(uuid())
+  number Int @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("table")
+}
+
+model User { // creates the table User in the db
+  id       String @id @default(uuid())
+  nickname String @unique
+  name     String
+  password String
+  image    String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Product { // creates the table Product in the db
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+  price       Float
+  image       String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("product")
+}
+
+// Now run npx prisma db push to create the db schema in the database, this creates a new database or substitutes existing one, remember to always push the prisma db everytime you update the schema.prisma, if you wish to just alter or add new thins use the migrate function
+
+The decorator @map serves to map new names for the table fields and the @@map serves to rename the table itself, it's not mandatory for making the code works but it's good practice.
 
 // After the database is created, run the npx prisma studio to check the client with the database and you can manually update, create and delete data. You can preferably use the beekeeper for this since the prisma studio is more limited(can't run queries), but usually for manual runs and checkings the studio should suffice.
 
@@ -151,3 +188,12 @@ export class PrismaModule {}
 // since you are working with probable variables you must let the variables be optional, so use the Partial<> to turn every variable within into optional values.
 
 // Don't forget, when using @Param don't use the : here you are using the variable itself in a method, when you use the : it's for routes as in get, post, delete, update, patch, etc.
+
+// now similiar to how you made the find, you can create the delete, remember that when using the prisma, you can use check the method to see the args, the delete method also exists inside the prisma, so just use it and that will be that. Remember that since you are deleting an item, you don't need to return anything so in the controller, you don't have to use return.
+// To reiterate, given that you are a donkey and got this wrong, you don't return anything so remember, no need for promises either, also, this is an async function, so in the service when you create the delete, use the async and await to realize the method.
+// You know what, for practicality terms, remember that for every type promise, you should try and use the async await, always, if the service is a straight return turn it into a const such as const a = await ... and then return the a. Little tip here, if you select the whole supposed value that is suposed to return and type (Ctrl + .) and then select extract to constant, you will create a constant that receives this value.
+
+// with this knowlgedge that you should already have had about async and await, it's time to implement the error responses, after the const that receives the await of each function, add an if to detect the const and if it's a false wich it will be if the const fails to receive a value, then use the throw new NotFoundException('Message'). You will need to use this in every service method that searches for specific values, so it returns the error if not found.
+
+// To create a new resource, use the nest g resource (name of resource) --no-spec, with this you will create a crud template of the resource, it could be users, products, table, etc.
+// Remember that in the new resource you will have to update the swagger tags and imports that is not naturally imported.

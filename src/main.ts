@@ -12,10 +12,11 @@ async function bootstrap() {
   // Swagger
   const config = new DocumentBuilder() //this creates a documentBuilder for validation with swagger
     .setTitle('PizzaFresh')
-    .setDescription('Aplicação para gestão das mesas de uma pizzaria')
+    .setDescription('App for table management of a pizza place.')
     .setVersion('1.0.0')
     .addTag('status')
     .addTag('table')
+    .addTag('product')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
