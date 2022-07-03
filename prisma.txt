@@ -1,0 +1,246 @@
+O que São ORM's
+Uma ORM é uma bibliotecas que auxilia no gerenciamento e tratamento do banco de dados via código. Onde as mesmas trazem implementações e tratativas que evitam problemas de segurança e facilitam o trâmite de dados entre backend e banco de dados, por exemplo o Prisma, Sequelize, TypeORM, Mongoose dentre outros.
+O Prisma é o ORM utilizado neste módulo onde o mesmo possui suporte no uso de diversos bancos de dados sem necessidade de alterar a forma tratada em código. Tendo apenas que alterar a declaração do banco que será utilizado.
+
+Por que usar Prisma?
+Open Source;
+Schema:
+Gera o banco de dados;
+Atualiza a estrutura do banco de dados;
+Gera o Schema através de banco de dados já existente, através do introspect via o comando: npx prisma db pull
+Possui extensão para VsCode para corrigir erros e gerar foreign key automaticamente;
+Gera tipos de TypeScript para todas as operações e estrutura de dados, o que facilita e torna mais intuitivo todo o processo de manipulação do banco de dados.
+Lembrando que é importante saber sobre SQL e como trabalhar com o mesmo, pois com o uso de ORM’s e a facilidade que trazem, acabamos esquecendo conceitos chaves que são importantes de entender e ter noção do mesmo. Por este motivo o Prisma só foi apresentado neste momento do curso.
+
+Intalação do Prisma
+Primeiro precisamos instalá-lo como dependência de desenvolvimento. Para isto devemos executar em terminal o comando:
+npm install -D prisma
+Após isto é necessário iniciar o Prisma no projeto que deseja utilizá-lo:
+npx prisma init
+Com o Prisma já iniciado, o projeto estará agora com um arquivo .env, o qual será utilizado para a configuração da variável de ambiente contendo a URL do banco de dados.
+
+Ao final para gerar o banco de dados no schema.prisma, devemos executar o seguinte comando em um terminal aberto na raiz do projeto em questão:
+npx prisma db push
+
+Atualizar o banco de dados
+Caso o banco de dados já exista, e queiramos manter os dados atuais, presentes no banco, devemos utilizar o comando:
+npx prisma migrate dev –name NOME_MIGRATION
+
+Visualizar o banco de dados de forma rápída
+Para visualizar o banco de dados de forma rápida podemos executar o Prisma Studio e para isto devemos executar o comando em um terminal aberto na raiz do projeto em questão:
+npx prisma studio
+Para obter garantia de que os tipos e operações do banco de dados estão atualizados, após uma atualização do schema do Prisma. Devemos executar o comando:
+npx prisma generate
+
+Gerar um schema.prisma através de um banco de dados já existente
+Quando temos um banco de dados que já existe, não há a necessidade de criar um schema.prisma do zero. Para acelerar o processo devemos deixar a URL do banco de dados configurada, e então executar em um terminal aberto na raiz do projeto o seguinte comando:
+npx prisma db pull
+
+Criando o module para utilizar o Prisma:
+Para utilizar as operações criadas pelo Prisma, primeiro devemos criar o arquivo prisma.module.ts.
+import { Module } from "@nestjs/common";
+import { PrismaService } from "./prisma.service";
+
+@Module({
+	providers: [PrismaService], // Determina os provedores existentes
+	exports: [PrismaService], // Realiza a exportação dos provedores que precisarão ser utilizados em outros módulos.
+})
+export class PrismaModule {}
+Prisma service
+Também devemos criar o arquivo prisma.service.tse nele criamos uma classe que estende o PrismaClient que por sua vez possui todas as operações geradas pelo Prisma e a partir disso, temos o nosso schema criado. E por fim implementa o modulo OnModuleInit que por sua vez será utilizado para garantir que a conexão com o banco de dados foi realizada, através do método onModuleInit.
+Por fim através do método enableShutdownHooks garantimos que antes de a aplicação ser desligada a conexão do banco de dados será fechada:
+import { INestApplication, Injectable, OnModuleInit } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+	// Garante que o banco está conectado
+	async onModuleInit() {
+		await this.$connect();
+	}
+
+	// Garante que antes de desligar a aplicação o banco será desconectado
+	async enableShutdownHooks(app: INestApplication) {
+		this.$on("beforeExit", async () => {
+			await app.close();
+		});
+	}
+}
+Implementando o PrismaService ao TableService
+Primeiro precisamos gerar o module que neste exemplo fizemos a partir do model Table que definimos em nosso schema.prisma, o arquivo é chamado table.module.ts
+import { Module } from "@nestjs/common";
+import { PassportModule } from "@nestjs/passport";
+import { PrismaModule } from "src/prisma/prisma.module";
+import { TableController } from "./table.controller";
+import { TableService } from "./table.service";
+
+@Module({
+	imports: [PrismaModule, PassportModule.register({ defaultStrategy: "jwt" })],
+	controllers: [TableController],
+	providers: [TableService],
+})
+export class TableModule {}
+Neste arquivo realizamos a importação do PrismaModule. Isto é feito para que possamos utilizar as operações implementadas de PrismaService através do PrismaClient em nosso TableService. Realizamos também a importação de TableController e TableService, que implementa o ecossistema de controller e service. O que ajuda a separar e gerenciar as responsabilidades de chamadas na camada http, e mandar as respostas. Além de dar a responsabilidade de manipulação de dados do banco ao TableController. Que por sua vez virá a utilizar as operações através do PrismaService.
+Table Service
+Agora criamos o arquivo table.service.ts, nele desenvolvemos uma classe TableService na qual injetamos o PrismaService que garante que possamos utilizar os tipos e operações gerados pelo Prisma.
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+
+@Injectable()
+export class TableService {
+	constructor(private readonly prisma: PrismaService) {}
+}
+Desta forma, para realizarmos uma operação, realizamos a chamada do objeto PrismaService, seguido por um apontamento “.” o nome do model criado no schema.prisma iniciando com letra minúscula. Seguido por mais um apontamento “.” que por sua vez chama a operação desejada:
+this.prisma.table.findMany();
+
+Assim ao criarmos todas operações desejadas. Que neste caso nosso arquivo ficou assim:
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+import { handleError } from "src/utils/handle-error.util";
+import { CreateTableDto } from "./dto/create-table.dto";
+import { UpdateTableDto } from "./dto/update-table.dto";
+import { Table } from "./entities/table.entity";
+
+@Injectable()
+export class TableService {
+	constructor(private readonly prisma: PrismaService) {}
+
+	findAll(): Promise<Table[]> {
+		return this.prisma.table.findMany();
+	}
+
+	create(dto: CreateTableDto): Promise<Table> {
+		const data: Table = { ...dto };
+
+		return this.prisma.table.create({ data }).catch(handleError);
+	}
+
+	async findOne(id: string): Promise<Table> {
+		const record = await this.prisma.table.findUnique({ where: { id } });
+
+		if (!record) {
+			throw new NotFoundException(`ID ${id} não encontrado.`);
+		}
+
+		return record;
+	}
+
+	async update(id: string, dto: UpdateTableDto): Promise<Table> {
+		const record = await this.prisma.table.findUnique({ where: { id } });
+
+		if (!record) {
+			throw new NotFoundException(`ID ${id} não encontrado.`);
+		}
+
+		const data: Partial<Table> = { ...dto };
+
+		return this.prisma.table
+			.update({
+				where: { id },
+				data,
+			})
+			.catch(handleError);
+	}
+
+	async delete(id: string) {
+		const isRecordFound = await this.prisma.table.findUnique({ where: { id } });
+
+		if (!isRecordFound) {
+			throw new NotFoundException(`ID ${id} não encontrado.`);
+		}
+
+		return this.prisma.table.delete({ where: { id } });
+	}
+}
+As operações fornecidas pelo PrismaService trazidas do PrismaClient, fornecem a possibilidade de implementar diversas condições internas através de um objeto como argumento da operação, como o exemplo a seguir demonstra:
+const selectTableConditions = {
+	where: { id }, // Define que a operação retornará apenas o dado que possui o id especifico.
+};
+
+this.prisma.table.findUnique(selectTableConditions);
+Dica Para mais informações sobre as diversas condições disponíveis, veja no seguinte link
+Table Controller
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	HttpStatus,
+	Param,
+	Patch,
+	Post,
+	UseGuards,
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { CreateTableDto } from "./dto/create-table.dto";
+import { UpdateTableDto } from "./dto/update-table.dto";
+import { Table } from "./entities/table.entity";
+import { TableService } from "./table.service";
+
+@ApiTags("table")
+@Controller("table")
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
+export class TableController {
+	constructor(private tableService: TableService) {}
+
+	@Get()
+	@ApiOperation({
+		summary: "Listar todas as mesas",
+	})
+	findAll(): Promise<Table[]> {
+		return this.tableService.findAll();
+	}
+
+	@Get(":id")
+	@ApiOperation({
+		summary: "Visualizar uma mesa",
+	})
+	findOne(@Param("id") id: string): Promise<Table> {
+		return this.tableService.findOne(id);
+	}
+
+	@Post()
+	@ApiOperation({
+		summary: "Criar uma mesa",
+	})
+	create(@Body() dto: CreateTableDto): Promise<Table> {
+		return this.tableService.create(dto);
+	}
+
+	@Patch(":id")
+	@ApiOperation({
+		summary: "Editar uma mesa",
+	})
+	update(@Param("id") id: string, @Body() dto: UpdateTableDto): Promise<Table> {
+		return this.tableService.update(id, dto);
+	}
+
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Delete(":id")
+	@ApiOperation({
+		summary: "Excluir uma mesa",
+	})
+	async delete(@Param("id") id: string): Promise<void> {
+		this.tableService.delete(id);
+	}
+}
+
+
+
+GET
+Em findById utilizamos o método NotFoundException para realizar o tratamento do retorno, caso o registro definido não seja encontrado. Que por sua vez retorna um status 404 no caso da condição em que a operação findUnique não tenha retornada nenhum dado.
+O método NotFoundException pode receber uma mensagem como parâmetro, mensagem esta que será inclusa ao retorno 404. Assim podendo especificar melhor à que se trata a requisição que houve falha.
+PUT
+Em create utilizamos o conceito de DTO, onde chamamos o createTableDto para validar os dados enviados pela requisição ao create. Assim enviando para a operação create os valores validos. Que por final com o uso do catch definimos que em caso de erro será feita a chamada de um método que será responsável pelo tratamento dele antes de retornar qualquer informação á requisição realizada.
+PATCH
+Em update aprendemos a utilizar o DTO de forma parcial com o uso de Partial<nome da entidade> e transformando o UpdateTableDto em uma implementação parcial de CreateTableDto . Que por sua vez define que não necessita de todos os atributos contidos na entidade definida. Pois assim conseguimos atualizar apenas dados alterados, ou seja: será alterado parcialmente os dados do registro selecionado.
+E para garantir que o dado existe no banco de dados realizamos a chamada de findById e só executamos o update quando o mesmo retorna algum valor da pesquisa.
+DELETE
+Por fim, criamos a operação delete onde a mesma recebe como parâmetro o id do item a ser excluído da base de dados. E como a operação delete não possui retorno. Definimos o método com o status no content atribuído pelo tipo:
+@HTTPCode(HttpStatus.NO_CONTENT)
+
+Para criação de novas rotas:
+nest g resource
