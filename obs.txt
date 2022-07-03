@@ -197,3 +197,6 @@ export class PrismaModule {}
 
 // To create a new resource, use the nest g resource (name of resource) --no-spec, with this you will create a crud template of the resource, it could be users, products, table, etc.
 // Remember that in the new resource you will have to update the swagger tags and imports that is not naturally imported.
+// After updating the controller with the swagger and the service, you may note that the prisma may not have the variable of resource that you included before, in order for it to be included you must run npx prisma generate and after this you must reload the vscode with (ctrl + shift + p) type reload and select Reload Window.
+// Now define the dto's and entity of the new resource
+// Must also update the create-(new resource).dto.ts and include in the imports of the new resource module
