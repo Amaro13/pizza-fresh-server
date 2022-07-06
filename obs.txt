@@ -200,3 +200,13 @@ export class PrismaModule {}
 // After updating the controller with the swagger and the service, you may note that the prisma may not have the variable of resource that you included before, in order for it to be included you must run npx prisma generate and after this you must reload the vscode with (ctrl + shift + p) type reload and select Reload Window.
 // Now define the dto's and entity of the new resource
 // Must also update the create-(new resource).dto.ts and include in the imports of the new resource module
+
+// PAY ATTENTION OR THIS WILL BE THE BANE OF YOUR EXISTANCE:
+// to apply the hash(this means the encrypting of something) in the password you may decide to use the bcrypt library
+// to add this library this is the proper (and fucking only) way to install it(if you fail, to fix it you will end up downloading almost all the fucking types of this library, motherfucker, sorry for the language but i had a bug involving this that delayed me for fucking days, motherfucking days fuck,).
+// First: install using npm i bcrypt This will install the bcrypt
+// Second: install using npm i -D @types/bcrypt This will install it's types
+// Third: import it into the service using import * as bcrypt from 'bcrypt';
+// OBS: NO FUCKING MISTERY RIGHT? YOU FUCKING DONKEY AND YOU SPENT DAYS ON THAT SHIT, SHAME ON YOU, SHAME, PURE SHAME
+
+// Another way in wich the bcrypt saves the day,  you can use it to verify if the password is correct by making a comparison and the application of the data return, to see how, observe the code in used in the user.service, a good read will be eye opening. (specially the coments).
