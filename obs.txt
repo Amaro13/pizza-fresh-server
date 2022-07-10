@@ -210,3 +210,17 @@ export class PrismaModule {}
 // OBS: NO FUCKING MISTERY RIGHT? YOU FUCKING DONKEY AND YOU SPENT DAYS ON THAT SHIT, SHAME ON YOU, SHAME, PURE SHAME
 
 // Another way in wich the bcrypt saves the day,  you can use it to verify if the password is correct by making a comparison and the application of the data return, to see how, observe the code in used in the user.service, a good read will be eye opening. (specially the coments).
+
+// Alright here we go, now things start to get hard. When you need to work in databanks with many-to-one and many-to-many
+First let's apply the many-to-one(Order-to-User), notice in the schema how this case is created, in the schema.prisma this one is the Order.
+  user   User   @relation(fields: [userId], references: [id]) -> This is saying that it's creating a column 'userId' by taking the value from the column 'id' in the table User (notice that the user is just the name of the method, it could be banana and it would still work, naming it user to match the table name is just good practice)
+  userId String @map("user_id") -> this one is just renaming the column userId as user_id
+
+  And now to finish the connection of many-to-one in the schema, you have to connect the order table into the user table.
+  orders Order[] -> this finishes that connection... that is it for connecting the table in the schema as many-to-one.
+
+Second let's apply the many-to-many(Order-to-Product), notice in the schema how this case is created, in the schema.prisma this one is the Order.
+  products Product[]
+
+  And now to finish the connection of many-to-one in the schema, you have to connect the order table into the user table.
+  orders Order[] -> I know, you expected it to be harder, well it will be, just you wait. this is not the part where it will get hard... wait for the connection with the CRUD involving them. BTW check how you can create the vivid connections in the prisma studio... you will have to simulate that with your code... yup good luck, creating a user with a Order that includes many products, next level.
