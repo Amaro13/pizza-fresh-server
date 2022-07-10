@@ -224,3 +224,5 @@ Second let's apply the many-to-many(Order-to-Product), notice in the schema how 
 
   And now to finish the connection of many-to-one in the schema, you have to connect the order table into the user table.
   orders Order[] -> I know, you expected it to be harder, well it will be, just you wait. this is not the part where it will get hard... wait for the connection with the CRUD involving them. BTW check how you can create the vivid connections in the prisma studio... you will have to simulate that with your code... yup good luck, creating a user with a Order that includes many products, next level.
+
+// Now preparing the Crud creation of order, nothing particullar in this stage, but... well, remember what will really be necessary for you here, like in the example of order, the update is not necessary, but in other cases it might be. So just keep it in mind in the future.
