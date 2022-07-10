@@ -1,12 +1,12 @@
 import {
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { handleError } from 'src/utils/handle-error.util';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
@@ -61,13 +61,15 @@ export class UserService {
 
     return this.prisma.user
       .create({ data, select: this.userSelect })
-      .catch(this.handleError); // this returns the new data user(since it has the name data you can just write data instead of data:data) to the prisma user with the id getting created automatically with the ORM. If an error occurs it prints the error and returns undefined.
+      .catch(handleError); // this returns the new data user(since it has the name data you can just write data instead of data:data) to the prisma user with the id getting created automatically with the ORM. If an error occurs it prints the error and returns undefined.
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<User> {
     await this.findById(id);
-    if (dto.password) {//checks if the dto you are using has a password
-      if ((dto.password != dto.confirmPassword)) { // if it has a password is it correct?
+    if (dto.password) {
+      //checks if the dto you are using has a password
+      if (dto.password != dto.confirmPassword) {
+        // if it has a password is it correct?
         throw new BadRequestException('The passwords are not the same.');
       }
     }
@@ -76,30 +78,22 @@ export class UserService {
 
     const data: Partial<User> = { ...dto }; // here you are using the Partial <> to turn every value within, in this case the user, into optional values
 
-    if (data.password) { //encrypts the password
+    if (data.password) {
+      //encrypts the password
       data.password = await bcrypt.hash(data.password, 10);
     }
-    return this.prisma.user.update({ //updates the item where the id is the same with the info included in data
-      where: { id },
-      data,
-    });
+    return this.prisma.user
+      .update({
+        //updates the item where the id is the same with the info included in data
+        where: { id },
+        data,
+        select: this.userSelect,
+      })
+      .catch(handleError);
   }
 
   async delete(id: string) {
     await this.findById(id);
     await this.prisma.user.delete({ where: { id } }); //deletes this item from the user
-  }
-
-  handleError(error: Error): undefined {
-    const errorLines = error.message?.split('\n');
-    const lastErrorLine = errorLines[errorLines.length - 1]?.trim();
-
-    if (!lastErrorLine) {
-      console.error(error);
-    }
-
-    throw new UnprocessableEntityException(
-      lastErrorLine || 'Some undefined error occurred',
-    ); // this is magic, if it fails to proccess in any case, it returns the error
   }
 }
