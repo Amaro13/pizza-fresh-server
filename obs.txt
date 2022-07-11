@@ -226,3 +226,7 @@ Second let's apply the many-to-many(Order-to-Product), notice in the schema how 
   orders Order[] -> I know, you expected it to be harder, well it will be, just you wait. this is not the part where it will get hard... wait for the connection with the CRUD involving them. BTW check how you can create the vivid connections in the prisma studio... you will have to simulate that with your code... yup good luck, creating a user with a Order that includes many products, next level.
 
 // Now preparing the Crud creation of order, nothing particullar in this stage, but... well, remember what will really be necessary for you here, like in the example of order, the update is not necessary, but in other cases it might be. So just keep it in mind in the future.
+
+// Remember the basic rule of don't repeat yourself? Well now you will apply it, create the folder utils and inside create the handle-error.util.ts, in here you will create the function to handle error and with it, you will call this function in every error that you have created or will create, so open the services and make the switch.
+
+// Now for the definition of how the many to one and many to many work, observe how the order.service work, for real it's super complicated now, read again when you can
