@@ -230,3 +230,11 @@ Second let's apply the many-to-many(Order-to-Product), notice in the schema how 
 // Remember the basic rule of don't repeat yourself? Well now you will apply it, create the folder utils and inside create the handle-error.util.ts, in here you will create the function to handle error and with it, you will call this function in every error that you have created or will create, so open the services and make the switch.
 
 // Now for the definition of how the many to one and many to many work, observe how the order.service work, for real it's super complicated now, read again when you can
+
+
+// Warning warning, now for the authentification. We can resume this step like this: implement o JWT(JsonWebToken) in the login route, after the bcrypt bcrypt verifies if the password is valid, and configure a token in localStorage that will be sent by the Header of all the HTTP requisitions.
+  Install passport with npm i passport passport-jwt passport-local @nestjs/passport @nestjs/jwt
+  Install the types of passport with npm i -D @types/passport-jwt @types/passport-local
+  And now generate the new resource that will be used exclusively for this with: nest generate resource auth --no-spec (remember this will not need a CRUD)
+  remember to add in the DocumentBuilder of swagger in the main module the auth tag after the status and addBearerAuth before the build
+  
