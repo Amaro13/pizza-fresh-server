@@ -8,14 +8,18 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common'; // this is importing the methods used to render the data
 import { TableService } from './table.service'; // this is importing the functions from table.service as methods
 import { CreateTableDto } from './dto/create-table.dto'; // this is importing the functions from create-table.dto as methods
-import { ApiOperation, ApiTags } from '@nestjs/swagger'; // this is importing from the swagger for apiTags (must install with npm first)
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'; // this is importing from the swagger for apiTags (must install with npm first)
 import { Table } from './entities/table.entity';
 import { UpdateTableDto } from './dto/update-table.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('table') // links the controller to the all the APITAGs (get, post, delete, etc)
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller('table') //using the table here you are setting the table as the prefix for this controller
 export class TableController {
   constructor(private tableService: TableService) {} // this is creating in the class as the object tableService with the methods from the imported TableSevice as it's contents. and it's declared as private so it only exists inside of this class.

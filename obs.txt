@@ -241,4 +241,7 @@ Second let's apply the many-to-many(Order-to-Product), notice in the schema how 
 The authentification is almost done exactly the same, so since it has this pattern don't worry about trying to invent so much, in the service find the unique value of the nickname to be compared with the nickname used for the login with this: const user = await this.prisma.user.findUnique({ where: { nickname } });
 After this, compare if the password used is the same as the password linked with the nickname with this: const isHashValid = await bcrypt.compare(password, user.password);
 Just to make sure, in order for an item to be authenticated it must first exist so to authenticate the user, the user must first be created.
-
+To add all the other resources to the authentication, just add the:
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+Adding these two in the controller right before the controller is called affects all of it's routes, just as seen in every resource, and in the user you can see how to apply the authentication to each different route. Remember that this also requires the inclusion of the: PassportModule.register({ defaultStrategy: 'jwt' }) in the imports of each resource module in order to work.
