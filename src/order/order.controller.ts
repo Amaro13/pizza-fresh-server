@@ -1,8 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
+import { User } from 'src/user/entities/user.entity'; //have to import this entity to make the LoggedUser on line 20 to work
 
 @ApiTags('order')
 @UseGuards(AuthGuard())
@@ -15,8 +17,9 @@ export class OrderController {
   @ApiOperation({
     summary: 'Create an order',
   })
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  create(@LoggedUser() user: User, @Body() createOrderDto: CreateOrderDto) {
+    //including the LoggedUser from auth you increase the security
+    return this.orderService.create(user.id, createOrderDto); //the user.id is taken from the user entity of User.
   }
 
   @Get()
