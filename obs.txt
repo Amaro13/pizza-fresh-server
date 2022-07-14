@@ -245,3 +245,24 @@ To add all the other resources to the authentication, just add the:
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
 Adding these two in the controller right before the controller is called affects all of it's routes, just as seen in every resource, and in the user you can see how to apply the authentication to each different route. Remember that this also requires the inclusion of the: PassportModule.register({ defaultStrategy: 'jwt' }) in the imports of each resource module in order to work.
+
+To add even more security you can add the:
+  profile(@LoggedUser() user: User) {
+    return user;
+  }
+You can add this by importing the entity from user in the auth.controller, then create the logged-user.decorator.ts and inside create the method to be used(LoggedUser()):
+
+  import { createParamDecorator, ExecutionContext } from '@nestjs/common'; //importing necessary functions from nest
+
+  export const LoggedUser = createParamDecorator((_, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    const user = request.user;
+
+    delete user.password;
+
+    return user;
+  });
+
+//You can then add this security to each resource that uses the id created automatically by uuid(that references the id directly) in the dto. simply remove the autocreation from it's dto and in it's creation in the service insert the first required variable userId: string and the connect: id: userId. Finally in the controller you insert in the controller @LoggedUser() user: User, remeber to import the User entity and to call it's id when calling the service in the controller.
+
+//Remember to include the CORS protection so you can keep it safe from the phishing type of hack atack, a hacker can steal info inputed into the page if you don't include this protection. To include this protection just add it to the main in the bootstrap creation.

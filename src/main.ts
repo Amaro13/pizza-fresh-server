@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; //this adds th
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true }); // with this cors security as true, anyone can access the data inserted with a fetch freely
 
   // Validation
   app.useGlobalPipes(new ValidationPipe()); //this validates the data with the ValidationPipe
