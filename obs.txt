@@ -237,4 +237,8 @@ Second let's apply the many-to-many(Order-to-Product), notice in the schema how 
   Install the types of passport with npm i -D @types/passport-jwt @types/passport-local
   And now generate the new resource that will be used exclusively for this with: nest generate resource auth --no-spec (remember this will not need a CRUD)
   remember to add in the DocumentBuilder of swagger in the main module the auth tag after the status and addBearerAuth before the build
-  
+
+The authentification is almost done exactly the same, so since it has this pattern don't worry about trying to invent so much, in the service find the unique value of the nickname to be compared with the nickname used for the login with this: const user = await this.prisma.user.findUnique({ where: { nickname } });
+After this, compare if the password used is the same as the password linked with the nickname with this: const isHashValid = await bcrypt.compare(password, user.password);
+Just to make sure, in order for an item to be authenticated it must first exist so to authenticate the user, the user must first be created.
+
