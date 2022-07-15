@@ -269,3 +269,12 @@ You can add this by importing the entity from user in the auth.controller, then 
 
 
 Last steps: adjust the main, app.service and app.controller with the express addition to improve the status. Notice how it's done on each.
+
+To ensure that the databank has at least one item, you can create a seed mechanism that ensures that this data is seeded into your database as soon as the app is open. In order to do that follow these steps:
+
+1) In the package.json create the script -> "seed": "ts-node .src/prisma/seed.ts"
+2) In the src/prisma create the seed.ts and the seed folder.
+3) In the created seed folder create the index.ts and another ts file according to each resource that you want to create.
+4) Run the seed script and there ya go.(For details on how just look into the files here)
+
+For documentation use the compodoc by installing it with npm i -D @compodoc/compodoc and the running npx @compodoc/compodoc -p tsconfig.json -s, you can also create a script for it instead of typing all of its npx.
