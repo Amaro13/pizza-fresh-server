@@ -1,10 +1,14 @@
 import { ValidationPipe } from '@nestjs/common'; //this adds the validation into the main(must install with npm first)
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from "@nestjs/platform-express"; //
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; //this adds the routes verification from swagger (must install with npm first)
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true }); // with this cors security as true, anyone can access the data inserted with a fetch freely
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true }); // with this cors security as true, anyone can access the data inserted with a fetch freely
+
+  // To get the https protocol
+	app.set("trust proxy", 1);
 
   // Validation
   app.useGlobalPipes(new ValidationPipe()); //this validates the data with the ValidationPipe

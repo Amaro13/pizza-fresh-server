@@ -266,3 +266,6 @@ You can add this by importing the entity from user in the auth.controller, then 
 //You can then add this security to each resource that uses the id created automatically by uuid(that references the id directly) in the dto. simply remove the autocreation from it's dto and in it's creation in the service insert the first required variable userId: string and the connect: id: userId. Finally in the controller you insert in the controller @LoggedUser() user: User, remeber to import the User entity and to call it's id when calling the service in the controller.
 
 //Remember to include the CORS protection so you can keep it safe from the phishing type of hack atack, a hacker can steal info inputed into the page if you don't include this protection. To include this protection just add it to the main in the bootstrap creation.
+
+
+Last steps: adjust the main, app.service and app.controller with the express addition to improve the status. Notice how it's done on each.
