@@ -1,0 +1,4 @@
+it starts when you install the passport and passport-jwt
+import the module authenticator in the app.module
+register the JWT_SECRET as well and the time it stays active
+must declare the strategy in the module

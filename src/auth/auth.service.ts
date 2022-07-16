@@ -19,14 +19,14 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { nickname } });
 
     if (!user) {
-      throw new UnauthorizedException('Usuário e/ou senha inválidos');
+      throw new UnauthorizedException('Invalid user or password');
     }
 
     // Validates if the password is correct
     const isHashValid = await bcrypt.compare(password, user.password); // the bcrypt.compare(p,x) it takes a p value to be encrypted and compares to a x encrypted password and returns true of false if it's the same or false if it's different.
 
     if (!isHashValid) {
-      throw new UnauthorizedException('Usuário e/ou senha inválidos');
+      throw new UnauthorizedException('Invalid user or password');
     }
 
     delete user.password;

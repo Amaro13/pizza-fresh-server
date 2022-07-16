@@ -213,8 +213,9 @@ export class PrismaModule {}
 
 // Alright here we go, now things start to get hard. When you need to work in databanks with many-to-one and many-to-many
 First let's apply the many-to-one(Order-to-User), notice in the schema how this case is created, in the schema.prisma this one is the Order.
-  user   User   @relation(fields: [userId], references: [id]) -> This is saying that it's creating a column 'userId' by taking the value from the column 'id' in the table User (notice that the user is just the name of the method, it could be banana and it would still work, naming it user to match the table name is just good practice)
-  userId String @map("user_id") -> this one is just renaming the column userId as user_id
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull) -> This is saying that it's creating a column 'userId' by taking the value from the column 'id' in the table User (notice that the user is just the name of the method, it could be banana and it would still work, naming it user to match the table name is just good practice) VERY IMPORTANT, must use the User as optional with? and include the onDelete: SetNull so in case the user is deleted, the order is defined as null for this user and no error occurs
+  userId String? @map("user_id") -> this one is renaming the column userId as user_id and ensuring that with the String as optional it does not occur an error if it turns into null when the user is deleted
 
   And now to finish the connection of many-to-one in the schema, you have to connect the order table into the user table.
   orders Order[] -> this finishes that connection... that is it for connecting the table in the schema as many-to-one.
