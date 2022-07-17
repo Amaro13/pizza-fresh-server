@@ -1,0 +1,84 @@
+//To stop a password from returning from a function you can use the following method:
+  private userSelect = {
+    id: true,
+    nickname: true,
+    password: false,
+    name: true,
+    image: true,
+    createdAt: true,
+    updatedAt: true,
+  };
+
+  findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      select: this.userSelect,
+    });
+  }
+Notice that with this it will return all values, except for the password value. Look below some imports examples:
+
+// modo resumido com todos campos da tabela incluindo o password
+SELECT * FROM USERS
+
+// modo completo com todos campos da tabela incluindo o password
+SELECT id, nickname, password, name, image, cratedAt, updatedAt FROM USERS
+
+// modo removendo password da pesquisa.
+// modo utilizado pelo prisma por baixo dos panos.
+SELECT id, nickname, name, image, cratedAt, updatedAt FROM USERS
+
+
+// To start you have to install with npm the bcrypt (npm i bcrypt) and then import (import * as bcrypt from 'bcrypt';), then in the create of the resource that you want to have the password, you can create the confirmation of the password like so:
+  @ApiProperty({
+    description: 'Senha do usuário para login',
+    example: 'Abcd@1234',
+  })
+  @IsString()
+  @MinLength(6)
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Senha muito fraca',
+  })
+  password: string;
+
+  @ApiProperty({
+    description: 'A confirmação de senha deve ser igual a senha',
+    example: 'Abcd@123',
+  })
+  confirmPassword: string;
+
+//Notice the way the password is required to be confirmed.
+//In the service you can check for this like so:
+  async create(dto: CreateUserDto): Promise<User> {
+    // Inicio condição de validação
+    if (dto.password != dto.confirmPassword) {
+      throw new BadRequestException('Senhas informadas não são iguais.');
+    }
+    //fim condição de validação
+
+    delete dto.confirmPassword; // Remove confirmPassword de CreateUserDto para que não seja enviado ao banco. Isso ocasionaria em um erro por essa coluna não existir no banco.
+
+    const data: User = {
+      ...dto,
+      password: await bcrypt.hash(dto.password, 10),
+    };
+
+    return this.prisma.user
+      .create({ data, select: this.userSelect })
+      .catch(handleError);
+  }
+
+
+Realizar a chamada do método de criptografia ou validação com o uso do await
+
+  // usado para criptografar
+  await bcrypt.hash(dto.password, 10);
+
+  // usado para validar valor criptografado
+  await bcrypt.compare("valor inicial da senha sem criptografia","hash da senha criptografada");
+
+No caso de nosso projeto a criptografia foi utilizada dentro de um payload em nosso create para que assim o valor salvo em banco fosse nossa senha criptografada.
+  const data: User = {
+    // traz os valores recebidos pelo CreateUserDto
+    ...dto,
+    // substitui o valor de passeword recebido pelo dto por sua hash
+    password: await bcrypt.hash(dto.password, 10),
+  };
