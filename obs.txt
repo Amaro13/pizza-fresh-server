@@ -245,7 +245,8 @@ Just to make sure, in order for an item to be authenticated it must first exist 
 To add all the other resources to the authentication, just add the:
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
-Adding these two in the controller right before the controller is called affects all of it's routes, just as seen in every resource, and in the user you can see how to apply the authentication to each different route. Remember that this also requires the inclusion of the: PassportModule.register({ defaultStrategy: 'jwt' }) in the imports of each resource module in order to work.
+Adding these two in the controller right before the controller is called affects all of it's routes, just as seen in every resource, and in the user you can see how to apply the authentication to each different route.
+Remember that this also requires the inclusion of the: PassportModule.register({ defaultStrategy: 'jwt' }) in the imports of each resource module in order to work.
 
 To add even more security you can add the:
   profile(@LoggedUser() user: User) {
